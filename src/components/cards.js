@@ -1,4 +1,4 @@
-const initialCards = [
+export const initialCards = [
     {
       name: "Архыз",
       link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
@@ -24,3 +24,14 @@ const initialCards = [
       link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
     }
 ];
+
+export function deleteCard(event){
+  const card = event.target.closest('.card');
+  card.remove();
+}
+
+export function likeCard(evt){
+  if(evt.target.classList.contains('card__like-button')){
+    evt.target.classList.toggle('card__like-button_is-active');
+  }
+}

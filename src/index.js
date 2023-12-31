@@ -9,6 +9,10 @@ const likeActiveImage = new URL('./images/like-active.svg', import.meta.url);
 const likeinActiveImage = new URL('./images/like-inactive.svg', import.meta.url);
 
 import './pages/index.css';//импорт главного файла стилей
+import './scripts/index.js';
+
+/*import { createCard, deleteCard } from './scripts/index.js';
+createCard();*/
 
 const imagesMesto = [
   { name: 'addIcon', link: addIconImage },
@@ -20,7 +24,4 @@ const imagesMesto = [
   { name: 'editIcon', link: editIconImage },
   { name: 'likeActive', link: likeActiveImage },
   { name: 'likeInactive', link: likeinActiveImage },
-  { name: 'interBlackFont', link: interBlackFont },
-  { name: 'interMediumFont', link: interMediumFont },
-  { name: 'interRegularFont', link: interRegularFont },
 ]; 
