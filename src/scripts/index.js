@@ -1,60 +1,145 @@
-import { initialCards, createCard, addCard, deleteCard, likeCard } from "../components/cards.js";
-import { showCard, closePopup, closeEscape, closeOverlay } from "../components/modal.js";
+import { initialCards, createCard, deleteCard, likeCard } from "../components/cards.js";
+import { closePopup, openPopup } from "../components/modal.js";
 
 const placesList = document.querySelector('.places__list');
-const popup = document.querySelectorAll('.popup');
 
+/*button for popup*/
+const profileEditButton = document.querySelector('.profile__edit-button');
+const profileAddButton = document.querySelector('.profile__add-button');
+const cardImage = document.querySelectorAll('.card__image');
+
+/*popup*/
+const popup = document.querySelectorAll('.popup');
+const popupTypeEdit = document.querySelector('.popup_type_edit');
+const popupTypeNewCard = document.querySelector('.popup_type_new-card');
+const popupTypeImage = document.querySelector('.popup_type_image');
+const popupImage = document.querySelector('.popup__image');
+const popupCaption = document.querySelector('.popup__caption');
+
+/*forms*/
 const newPlaceForm = document.forms.new_place;
-newPlaceForm.addEventListener('submit', addCard);
+const editProfileForm = document.forms.edit_profile;
+
+/*popupInput*/
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
+const cardInput = document.querySelector('.popup__input_type_card-name');
+const urlInput = document.querySelector('.popup__input_type_url');
+
+const profileDescription = document.querySelector('.profile__description');
+const profileTitle = document.querySelector('.profile__title');
 
 popup.forEach(item => {
   item.classList.add('popup_is-animated');
 })
 
 initialCards.forEach(item => {
-  placesList.append(createCard(item.name, item.link, deleteCard, likeCard, showCard));
+  placesList.append(createCard(item.name, item.link));
+});
+
+profileEditButton.addEventListener('click', function(){
+  openPopup(popupTypeEdit);
+  jobInput.value = profileDescription.textContent;
+  nameInput.value = profileTitle.textContent;
+  popupTypeEdit.querySelector('.popup__close').addEventListener('click', function(){
+      closePopup(popupTypeEdit);
+    })
+});
+
+profileAddButton.addEventListener('click', function(){
+  openPopup(popupTypeNewCard);
+  popupTypeNewCard.querySelector('.popup__close').addEventListener('click', function(){
+    closePopup(popupTypeNewCard);
+  })
 });
 
 document.addEventListener('click', function(evt){
-  if(evt.target.classList.contains('profile__edit-button')){
-    document.querySelector('.popup_type_edit').classList.add('popup_is-opened');
-    jobInput.value = document.querySelector('.profile__description').textContent;
-    nameInput.value = document.querySelector('.profile__title').textContent;
+  if(evt.target.classList.contains('card__image')){
+    openPopup(popupTypeImage);
+    showCard(evt);
+    popupTypeImage.querySelector('.popup__close').addEventListener('click', function(){
+      closePopup(popupTypeImage);
+    })
   }
-  if(evt.target.classList.contains('profile__add-button')){
-    document.querySelector('.popup_type_new-card').classList.add('popup_is-opened');
-  }
-  document.addEventListener('click', closeOverlay);
-  document.addEventListener('keydown', closeEscape);
-  document.addEventListener('click', function(evt){
-    if(evt.target.classList.contains('popup__close')){
-      closePopup();
-    }
-  })
 })
 
-const formElement = document.querySelector('.popup__form');// Воспользуйтесь методом querySelector()
-// Находим поля формы в DOM
-const nameInput = document.querySelector('.popup__input_type_name');// Воспользуйтесь инструментом .querySelector()
-const jobInput = document.querySelector('.popup__input_type_description');//Воспользуйтесь инструментом .querySelector()
+/*cardImage.forEach(item => {
+  item.addEventListener('click', function(evt){
+    openPopup(popupTypeImage);
+    showCard(evt);
+    popupTypeImage.querySelector('.popup__close').addEventListener('click', function(){
+      closePopup(popupTypeImage);
+    })
+  })
+})*/
 
-// Обработчик «отправки» формы, хотя пока
-// она никуда отправляться не будет
-function handleFormSubmit(evt) {
-    evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
-    // Так мы можем определить свою логику отправки.
-    // О том, как это делать, расскажем позже.
-    // Получите значение полей jobInput и nameInput из свойства value
-    const jobValue = jobInput.value;
-    const nameValue = nameInput.value;
-    // Выберите элементы, куда должны быть вставлены значения полей
-    const profileDescription = document.querySelector('.profile__description');
-    const profileTitle = document.querySelector('.profile__title');
-    // Вставьте новые значения с помощью textContent
-    profileDescription.textContent = jobValue;
-    profileTitle.textContent = nameValue;
-    closePopup();
+function showCard(evt){
+  popupImage.src = evt.target.src;
+  popupCaption.textContent = evt.target.alt;
+  popupImage.alt = evt.target.alt;
 }
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
-formElement.addEventListener('submit', handleFormSubmit);
+
+function closeEscape(evt){
+  if(evt.code === 'Escape'){
+    popup.forEach(item => {
+      if(item.classList.contains('popup_is-opened')){
+        closePopup(item);
+      }
+    })
+}}
+function closeOverlay(evt){
+  closePopup(evt.target);
+}
+
+document.addEventListener('keydown', closeEscape);
+document.addEventListener('click', closeOverlay);
+
+function handleFormEditProfileSubmit(evt) {
+  evt.preventDefault();
+  profileDescription.textContent = jobInput.value;
+  profileTitle.textContent = nameInput.value;
+  closePopup(popupTypeEdit);
+}
+
+nameInput.addEventListener('input', function(){
+  if(nameInput.value.length > 12){
+    nameInput.value = '';
+    nameInput.placeholder = 'Не более 12 символов';
+  } else {
+    editProfileForm.addEventListener('submit', handleFormEditProfileSubmit);
+  }
+})
+
+jobInput.addEventListener('input', function(){
+  if(jobInput.value.length > 45) {
+    jobInput.value = '';
+    jobInput.placeholder = 'Не более 45 символов';
+  } else {
+    editProfileForm.addEventListener('submit', handleFormEditProfileSubmit);
+  }
+})
+
+function error(){
+    newPlaceForm.reset();
+    urlInput.placeholder = 'Введите корректную ссылку';
+}
+
+function load(){
+  const cardElement = createCard(cardInput.value, urlInput.value);
+  placesList.prepend(cardElement);
+  newPlaceForm.reset();
+  closePopup(popupTypeNewCard);
+}
+
+function loadImage(imageUrl, loadCallback, errorCallback){
+  const img = document.createElement('img');
+  img.src = imageUrl;
+  img.onload = loadCallback;
+  img.onerror = errorCallback;
+}
+
+function handleFormNewPlaceSubmit(evt){
+  evt.preventDefault();
+  loadImage(urlInput.value, load, error);
+};
+newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 
