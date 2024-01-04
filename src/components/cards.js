@@ -1,3 +1,8 @@
+import { openPopup } from "./modal.js";
+import { popupTypeImage, showCard } from "../scripts/index.js";
+
+//import (openPopup)
+
 export const initialCards = [
     {
       name: "Архыз",
@@ -25,7 +30,7 @@ export const initialCards = [
     }
 ];
 
-export function createCard(name, link) {
+export function createCard(name, link, showCard) {
   const cardElement = document.querySelector('#card-template').content.querySelector('.card').cloneNode(true);  
   cardElement.querySelector('.card__title').textContent = name;
   cardElement.querySelector('.card__image').src = link;
@@ -34,15 +39,19 @@ export function createCard(name, link) {
     deleteCard(evt);
   });
   cardElement.addEventListener('click', likeCard);
+  cardElement.querySelector('.card__image').addEventListener('click', function(evt){
+    openPopup(popupTypeImage);
+    showCard(evt.target.alt, evt.target.src);
+  });
   return cardElement;
 };
 
-export function deleteCard(evt){
+function deleteCard(evt){
   const card = evt.target.closest('.card');
   card.remove();
 }
 
-export function likeCard(evt){
+function likeCard(evt){
   if(evt.target.classList.contains('card__like-button')){
     evt.target.classList.toggle('card__like-button_is-active');
   }

@@ -1,8 +1,14 @@
-export function openPopup(evt) {
-  evt.classList.add('popup_is-opened');
+import { closeEscape, closeOverlay } from "../scripts/index.js";
+
+export function openPopup(popup) {
+  popup.classList.add('popup_is-opened');
+  document.addEventListener('keydown', closeEscape);
+  document.addEventListener('click', closeOverlay);
 }
 
-export function closePopup(evt) {
-  evt.classList.remove('popup_is-opened');
+export function closePopup(popup) {
+  popup.classList.remove('popup_is-opened');
   document.removeEventListener('click', closePopup);
+  document.removeEventListener('keydown', closeEscape);
+  document.removeEventListener('click', closeOverlay);
 }
