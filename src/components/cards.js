@@ -1,7 +1,5 @@
 import { openPopup } from "./modal.js";
-import { popupTypeImage, showCard } from "../scripts/index.js";
-
-//import (openPopup)
+import { popupTypeImage } from "../scripts/index.js";
 
 export const initialCards = [
     {

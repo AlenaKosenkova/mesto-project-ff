@@ -1,12 +1,14 @@
 import { initialCards, createCard } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
+import { enableValidation } from "../components/validation.js";
+//import { nameError, jobError } from "../components/validation.js";
 
 const placesList = document.querySelector('.places__list');
 
 /*button for popup*/
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
-const cardImage = document.querySelectorAll('.card__image');
+//const cardImage = document.querySelectorAll('.card__image');
 
 /*popup*/
 const popup = document.querySelectorAll('.popup');
@@ -22,16 +24,31 @@ const buttonClosePopupTypeNewCard = popupTypeNewCard.querySelector('.popup__clos
 
 /*forms*/
 const newPlaceForm = document.forms.new_place;
-const formPopupCard = document.forms.edit_profile;
+export const formPopupCard = document.forms.edit_profile;
 
 /*popupInput*/
-const nameInput = document.querySelector('.popup__input_type_name');
-const jobInput = document.querySelector('.popup__input_type_description');
+export const nameInput = document.querySelector('.popup__input_type_name');
+export const jobInput = document.querySelector('.popup__input_type_description');
 const cardInput = document.querySelector('.popup__input_type_card-name');
 const urlInput = document.querySelector('.popup__input_type_url');
 
+/*inputError*/
+export const nameError = formPopupCard.querySelector(`.${nameInput.id}-error`);
+export const jobError = formPopupCard.querySelector(`.${jobInput.id}-error`);
+
 const profileDescription = document.querySelector('.profile__description');
 const profileTitle = document.querySelector('.profile__title');
+
+enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+});
+
+//clearValidation(profileForm, validationConfig); 
 
 popup.forEach(item => {
   item.classList.add('popup_is-animated');
@@ -41,27 +58,22 @@ initialCards.forEach(item => {
   placesList.append(createCard(item.name, item.link, showCard));
 });
 
-profileEditButton.addEventListener('click', function(){
+profileEditButton.addEventListener('click', () => {
   openPopup(popupTypeEdit);
   jobInput.value = profileDescription.textContent;
   nameInput.value = profileTitle.textContent;
 });
 
-profileAddButton.addEventListener('click', function(){
-  openPopup(popupTypeNewCard);
+profileAddButton.addEventListener('click', () => {
+  openPopup(popupTypeNewCard)
+  newPlaceForm.reset();
 });
 
-buttonClosePopupTypeEdit.addEventListener('click', function(){
-  closePopup(popupTypeEdit)
-});
+buttonClosePopupTypeEdit.addEventListener('click', () => {closePopup(popupTypeEdit)});
 
-buttonClosePopupTypeNewCard.addEventListener('click', function() {
-  closePopup(popupTypeNewCard)
-});
+buttonClosePopupTypeNewCard.addEventListener('click', () => {closePopup(popupTypeNewCard)});
 
-buttonClosePopupTypeImage.addEventListener('click', function() {
-  closePopup(popupTypeImage)
-});
+buttonClosePopupTypeImage.addEventListener('click', () => {closePopup(popupTypeImage)});
 
 export function showCard(name, link){
   popupImage.src = link;
@@ -84,23 +96,26 @@ export function closeOverlay(evt){
 
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
-  if(nameInput.value.length > 12){
+  /*if(nameInput.value.length > 12){
     nameInput.value = '';
     nameInput.placeholder = 'Не более 12 символов';
-  } else if(jobInput.value.length > 45) {
+  } else *//*if(jobInput.value.length > 45) {
     jobInput.value = '';
     jobInput.placeholder = 'Не более 45 символов';
-  } else {
+  } else */ //{
   profileDescription.textContent = jobInput.value;
   profileTitle.textContent = nameInput.value;
   closePopup(popupTypeEdit);
-}
+//}
 }
 formPopupCard.addEventListener('submit', handleFormEditProfileSubmit);
+
+
 
 function error(){
     newPlaceForm.reset();
     urlInput.placeholder = 'Введите корректную ссылку';
+    //urlInput.setCustomValidity(urlInput.dataset.errorMessage);
 }
 
 function load(){
