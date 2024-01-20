@@ -107,7 +107,7 @@
           name="link" 
           class="popup__input popup__input_type_url" 
           placeholder="Ссылка на картинку"
-          pattern="^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)+$"
+          data-error-message="Введите корректный URL"
           required>
         <span class="link-input-error popup__span"></span>
         <button 
@@ -134,7 +134,9 @@
     <div class="card__description">
       <h2 class="card__title">
       </h2>
-      <button type="button" class="card__like-button"></button>
+      <div class="card__like">
+        <button type="button" class="card__like-button"></button><span class="card__like-counter"></span>
+      </div>
     </div>
   </li>
 </template>

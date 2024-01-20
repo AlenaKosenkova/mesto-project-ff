@@ -28,11 +28,12 @@ export const initialCards = [
     }
 ];
 
-export function createCard(name, link, showCard) {
-  const cardElement = document.querySelector('#card-template').content.querySelector('.card').cloneNode(true);  
+export function createCard(name, link, likes, showCard) {
+  const cardElement = document.querySelector('#card-template').content.querySelector('.card').cloneNode(true);
   cardElement.querySelector('.card__title').textContent = name;
   cardElement.querySelector('.card__image').src = link;
   cardElement.querySelector('.card__image').alt = name;
+  cardElement.querySelector('.card__like-counter').textContent = likes;
   cardElement.querySelector('.card__delete-button').addEventListener('click', function(evt){
     deleteCard(evt);
   });

@@ -1,18 +1,16 @@
 import { initialCards, createCard } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
 import { enableValidation } from "../components/validation.js";
-//import { nameError, jobError } from "../components/validation.js";
+import {} from "../components/api.js";
 
-const placesList = document.querySelector('.places__list');
+export const placesList = document.querySelector('.places__list');
 
 /*button for popup*/
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
-//const cardImage = document.querySelectorAll('.card__image');
 
 /*popup*/
 const popup = document.querySelectorAll('.popup');
-//const popupIsOpened = document.querySelector('.popup_is-opened');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
 export const popupTypeImage = document.querySelector('.popup_type_image');
@@ -29,8 +27,8 @@ export const formPopupCard = document.forms.edit_profile;
 /*popupInput*/
 export const nameInput = document.querySelector('.popup__input_type_name');
 export const jobInput = document.querySelector('.popup__input_type_description');
-const cardInput = document.querySelector('.popup__input_type_card-name');
-const urlInput = document.querySelector('.popup__input_type_url');
+export const cardInput = document.querySelector('.popup__input_type_card-name');
+export const urlInput = document.querySelector('.popup__input_type_url');
 
 /*inputError*/
 export const nameError = formPopupCard.querySelector(`.${nameInput.id}-error`);
@@ -54,9 +52,9 @@ popup.forEach(item => {
   item.classList.add('popup_is-animated');
 })
 
-initialCards.forEach(item => {
+/*initialCards.forEach(item => {
   placesList.append(createCard(item.name, item.link, showCard));
-});
+});*/
 
 profileEditButton.addEventListener('click', () => {
   openPopup(popupTypeEdit);
@@ -96,30 +94,24 @@ export function closeOverlay(evt){
 
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
-  /*if(nameInput.value.length > 12){
-    nameInput.value = '';
-    nameInput.placeholder = 'Не более 12 символов';
-  } else *//*if(jobInput.value.length > 45) {
-    jobInput.value = '';
-    jobInput.placeholder = 'Не более 45 символов';
-  } else */ //{
   profileDescription.textContent = jobInput.value;
   profileTitle.textContent = nameInput.value;
   closePopup(popupTypeEdit);
-//}
 }
 formPopupCard.addEventListener('submit', handleFormEditProfileSubmit);
 
 
 
 function error(){
-    newPlaceForm.reset();
-    urlInput.placeholder = 'Введите корректную ссылку';
-    //urlInput.setCustomValidity(urlInput.dataset.errorMessage);
+  const errorLinkInput = newPlaceForm.querySelector('.link-input-error');
+  errorLinkInput.textContent = newPlaceForm.querySelector('.popup__input_type_url').dataset.errorMessage;
+  //newPlaceForm.reset();
+  //urlInput.placeholder = 'Введите корректную ссылку';
 }
 
-function load(){
-  const cardElement = createCard(cardInput.value, urlInput.value, showCard);
+export function load(){
+  const likes = 0;
+  const cardElement = createCard(cardInput.value, urlInput.value, likes, showCard);
   placesList.prepend(cardElement);
   newPlaceForm.reset();
   closePopup(popupTypeNewCard);
