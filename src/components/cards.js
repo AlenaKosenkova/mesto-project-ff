@@ -1,5 +1,6 @@
 import { openPopup } from "./modal.js";
 import { popupTypeImage } from "../scripts/index.js";
+//import { likeCount } from "./api.js";
 
 export const initialCards = [
     {
@@ -34,6 +35,7 @@ export function createCard(name, link, likes, showCard) {
   cardElement.querySelector('.card__image').src = link;
   cardElement.querySelector('.card__image').alt = name;
   cardElement.querySelector('.card__like-counter').textContent = likes;
+  //cardElement.querySelector('.card__delete-button').classList.add('card__delete-button_is_hidden');
   cardElement.querySelector('.card__delete-button').addEventListener('click', function(evt){
     deleteCard(evt);
   });
@@ -54,4 +56,5 @@ function likeCard(evt){
   if(evt.target.classList.contains('card__like-button')){
     evt.target.classList.toggle('card__like-button_is-active');
   }
+  //likeCount(evt);
 }

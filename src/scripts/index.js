@@ -1,9 +1,10 @@
 import { initialCards, createCard } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
-import { enableValidation } from "../components/validation.js";
-import {} from "../components/api.js";
+import { enableValidation, clearValidation } from "../components/validation.js";
+import { changeUser, showUser, showAPICards, postCard } from "../components/api.js";
 
 export const placesList = document.querySelector('.places__list');
+const deleteButton = document.querySelector('.card__delete-button');
 
 /*button for popup*/
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -34,8 +35,10 @@ export const urlInput = document.querySelector('.popup__input_type_url');
 export const nameError = formPopupCard.querySelector(`.${nameInput.id}-error`);
 export const jobError = formPopupCard.querySelector(`.${jobInput.id}-error`);
 
-const profileDescription = document.querySelector('.profile__description');
-const profileTitle = document.querySelector('.profile__title');
+export const profileDescription = document.querySelector('.profile__description');
+export const profileTitle = document.querySelector('.profile__title');
+
+showUser(profileTitle, profileDescription);
 
 enableValidation({
   formSelector: '.popup__form',
@@ -46,11 +49,15 @@ enableValidation({
   errorClass: 'popup__error_visible'
 });
 
+//console.log(formPopupCard);
+
 //clearValidation(profileForm, validationConfig); 
 
 popup.forEach(item => {
   item.classList.add('popup_is-animated');
 })
+
+showAPICards(createCard, showCard, placesList);
 
 /*initialCards.forEach(item => {
   placesList.append(createCard(item.name, item.link, showCard));
@@ -58,12 +65,14 @@ popup.forEach(item => {
 
 profileEditButton.addEventListener('click', () => {
   openPopup(popupTypeEdit);
+  clearValidation(popupTypeEdit/*, formSelector*//*, validationConfig*/);
   jobInput.value = profileDescription.textContent;
   nameInput.value = profileTitle.textContent;
 });
 
 profileAddButton.addEventListener('click', () => {
-  openPopup(popupTypeNewCard)
+  openPopup(popupTypeNewCard);
+  clearValidation(popupTypeNewCard/*, formSelector*//*, validationConfig*/);
   newPlaceForm.reset();
 });
 
@@ -94,13 +103,13 @@ export function closeOverlay(evt){
 
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
-  profileDescription.textContent = jobInput.value;
-  profileTitle.textContent = nameInput.value;
+  changeUser(nameInput.value, jobInput.value);
+  showUser(profileTitle, profileDescription);
+  //profileDescription.textContent = jobInput.value;
+  //profileTitle.textContent = nameInput.value;
   closePopup(popupTypeEdit);
 }
 formPopupCard.addEventListener('submit', handleFormEditProfileSubmit);
-
-
 
 function error(){
   const errorLinkInput = newPlaceForm.querySelector('.link-input-error');
@@ -111,7 +120,9 @@ function error(){
 
 export function load(){
   const likes = 0;
-  const cardElement = createCard(cardInput.value, urlInput.value, likes, showCard);
+  const cardElement = showAPICards(createCard, showCard, placesList);
+  //const cardElement = createCard(cardInput.value, urlInput.value, likes, showCard);
+  postCard(cardInput.value, urlInput.value/*, document.querySelector('.card__delete-button')*/);
   placesList.prepend(cardElement);
   newPlaceForm.reset();
   closePopup(popupTypeNewCard);
@@ -125,7 +136,7 @@ function loadImage(imageUrl, loadCallback, errorCallback){
 }
 
 function handleFormNewPlaceSubmit(evt){
-  evt.preventDefault();
+  //evt.preventDefault();
   loadImage(urlInput.value, load, error);
 };
 newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 

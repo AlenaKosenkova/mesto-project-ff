@@ -1,14 +1,15 @@
 /*Показывает элемент ошибки*/
-export function showInputError(formElement, formSelector, inputElement, errorMessage) {
+function showInputError(formElement, formSelector, inputElement, errorMessage) {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  formElement.classList.add(formSelector.inputErrorClass);
+  errorElement.classList.add(formSelector.errorClass);
+  inputElement.classList.add(formSelector.inputErrorClass);
   errorElement.textContent = errorMessage;
 }
 
 /*Скрывает элемент ошибки*/
-export function hideInputError(formElement, formSelector, inputElement) {
+function hideInputError(formElement, formSelector, inputElement) {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  formElement.classList.remove(formSelector.inputErrorClass);
+  inputElement.classList.remove(formSelector.inputErrorClass);
   errorElement.textContent = '';
 }
 
@@ -24,6 +25,7 @@ function toggleButtonState(inputList, buttonElement, formSelector) {
   if(hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
     buttonElement.classList.add(formSelector.inactiveButtonClass);
+
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(formSelector.inactiveButtonClass);
@@ -31,7 +33,7 @@ function toggleButtonState(inputList, buttonElement, formSelector) {
 }
 
 /*Проверяет валидность поля, внутри вызывает showInputError или hideInputError*/
-export function isValid(formElement, formSelector, inputElement) {
+function isValid(formElement, formSelector, inputElement) {
   if(inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
@@ -45,7 +47,7 @@ export function isValid(formElement, formSelector, inputElement) {
 }
 
 /*Добавим обработчики всем полям формы*/
-export function setEventListener(formElement, formSelector) {
+function setEventListener(formElement, formSelector) {
   const inputList = Array.from(formElement.querySelectorAll(formSelector.inputSelector));
   const buttonElement = formElement.querySelector(formSelector.submitButtonSelector);
   toggleButtonState(inputList, buttonElement, formSelector);
@@ -62,5 +64,16 @@ export function enableValidation(formSelector) {
   const formList = Array.from(document.querySelectorAll(formSelector.formSelector));
   formList.forEach((formElement) => {
     setEventListener(formElement, formSelector);
+  })
+}
+
+export function clearValidation(profileForm/*, validationConfig*/) {
+  const errorSpanList = Array.from(profileForm.querySelectorAll('.popup__span'));
+  const errorInputList = Array.from(profileForm.querySelectorAll('.popup__input'));
+  errorSpanList.forEach((item) => {
+    item.classList.remove(/*validationConfig.errorClass*/'popup__error_visible');
+  })
+  errorInputList.forEach((item) => {
+    item.classList.remove(/*validationConfig.inputErrorClass*/'popup__input_type_error');
   })
 }
