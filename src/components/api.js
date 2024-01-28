@@ -17,7 +17,14 @@ let cardLink;
 let cardLikes;
 let cardOwnerId;
 let allCards;
-let likes;
+let likesAdd;
+let likesRemove;
+let avatarUrl;
+let postCardName;
+let postCardLink;
+let postCardLikes;
+let postCardOwner;
+let postCardId;
 
 const config = {
   URL: 'https://mesto.nomoreparties.co/v1/wff-cohort-5',
@@ -64,6 +71,7 @@ export async function getUser() {
       userId = user._id;
       userName = user.name;
       userAbout = user.about;
+      avatarUrl = user.avatar;
     })
     .catch(err => console.log(`Ошибка ${err}`))
 }
@@ -80,6 +88,7 @@ export async function showUser() {
     .then(() => {
       document.querySelector('.profile__title').textContent = userName;
       document.querySelector('.profile__description').textContent = userAbout;
+      document.querySelector('.profile__image').style.backgroundImage = `url('${avatarUrl}')`
     })
     .catch(err => console.log(`Ошибка ${err}`))
 }
@@ -113,13 +122,20 @@ export async function showAPICards(createCard, showCard, placesList) {
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
-/*export function changeAvatar() {
+export function changeAvatar(profileImage, avatarUrl) {
   return fetch(`${config.URL}/users/me/avatar`, {
-
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl
+    })
   })
-}*/
+    .then(res => res.json())
+    .then(result => avatarUrl = result.avatar)
+    .then(() => profileImage.style.backgroundImage = `url('${avatarUrl}')`)
+}
 
-export function postCard(cardName, urlName) {
+export function postCard(cardName, urlName, createCard, showCard, placesList) {
   return fetch(`${config.URL}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -129,6 +145,17 @@ export function postCard(cardName, urlName) {
     })
   })
     .then(res => res.json())
+    .then((result) => {
+      postCardName = result.name;
+      postCardLink = result.link;
+      postCardLikes = result.likes;
+      postCardOwner = result.owner._id;
+      postCardId = result._id;
+    })
+    .then(() => {
+      placesList.append(createCard(postCardName, postCardLink, postCardLikes, showCard, postCardOwner, userId, postCardId))
+    })
+    .then(() => showAPICards(createCard, showCard, placesList))
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
@@ -141,68 +168,22 @@ export function deleteAPICard(cardId) {
   .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function addLike(cardId) {
+export function addLike(cardId, cardElement) {
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers: config.headers,
-    //body: JSON.stringify({
-    //  likes: likes
-    //})
   })
   .then(res=>res.json())
-  //.then(result => console.log(result._id))
+  .then(result => likesAdd = result.likes)
+  .then(() => cardElement.querySelector('.card__like-counter').textContent = likesAdd.length)
 }
 
-export function deleteLike(cardId, likes) {
+export function deleteLike(cardId, cardElement) {
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
-    body: JSON.stringify({
-      likes: likes
-    })
   })
   .then(res=>res.json())
-  .then(result => likes = result)
+  .then(result => likesRemove = result.likes)
+  .then(() => cardElement.querySelector('.card__like-counter').textContent = likesRemove.length)
 }
-
-/*function likeCount(card) {
-  let like = 0;
-  putCard(card._id)
-    .then(res=>res.json())
-    .then((data) => {
-      data.forEach((item) => {
-        like = item.likes
-      })
-    })
-  const likeButton = document.querySelectorAll('.card__like-button');
-  likeButton.forEach((item) => {
-  }) 
-}*/
-
-/*function likeCount() {
-  putCard('65ac35fb5c71cd66435449ec')
-    .then(res => res.json())
-    .then((result) => {
-      console.log(result);
-    })
-}
-
-likeCount();*/
-
-//likeCount('65ac35fb5c71cd66435449ec');
-
-//document.addEventListener('click', likeCard);
-
-//likeCard();
-
-//document.addEventListener('click', likeCard);
-
-/*fetch(`https://nomoreparties.co/v1/wff-cohort-5/cards/likes/${cardId}`,{
-  method: 'PUT',
-  headers: {
-    authorization: '2cb2188a-a25e-48c4-964b-fdf31730250e',
-    'Content-Type': 'application/json'
-  },
-})
-  .then(res => res.json())
-  .then((result) => {console.log(result)})*/

@@ -4,12 +4,19 @@
   width: 120px;
   height: 120px;
   background-color: transparent;
+  /*background-color: rgba(0, 0, 0, 0);*/
   background-image: url('../../../../images/edit-icon.svg');
   background-size: 26px 26px;
   background-position: center;
   background-repeat: no-repeat;
   border: none;
-  cursor: pointer;
+  cursor: pointer;  
+  -webkit-transition: 0.2s;
+  -moz-transition: 0.2s;
+  -ms-transition: 0.2s;
+  -o-transition: 0.2s;
+  transition: 0.2s;
+  /*transition: background-color 0.4s;*/
 }
 
 /*.profile__image_edit-button:hover {

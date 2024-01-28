@@ -1,10 +1,10 @@
 import { initialCards, createCard, deleteCard } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
 import { enableValidation, clearValidation } from "../components/validation.js";
-import { changeUser, showUser, showAPICards, postCard } from "../components/api.js";
+import { changeUser, showUser, showAPICards, postCard, changeAvatar } from "../components/api.js";
 
 export const placesList = document.querySelector('.places__list');
-const profileImage = document.querySelector('.profile__image');
+export const profileImage = document.querySelector('.profile__image');
 
 /*button for popup*/
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -53,8 +53,6 @@ enableValidation({
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__error_visible'
 });
-
-//clearValidation(profileForm, validationConfig); 
 
 popup.forEach(item => {
   item.classList.add('popup_is-animated');
@@ -137,18 +135,16 @@ function error(form, spanError, inputType){
 }
 
 export function loadCard(){
-  //const likes = 0;
-  postCard(cardInput.value, urlInput.value);
   //showAPICards(createCard, showCard, placesList);
-  const cardElement = showAPICards(createCard, showCard, placesList);
-  placesList.prepend(cardElement);
+  //const cardElement = postCard(cardInput.value, urlInput.value, createCard, showCard, placesList);
+  placesList.prepend(postCard(cardInput.value, urlInput.value, createCard, showCard, placesList));
   newPlaceForm.reset();
   closePopup(popupTypeNewCard);
   //showAPICards(createCard, showCard, placesList);
 }
 
 function newAvatar() {
-  profileImage.style.backgroundImage = `url('${avatarInput.value}')`;
+  changeAvatar(profileImage, avatarInput.value);
   closePopup(popupTypeAvatar);
 }
 
@@ -159,12 +155,12 @@ function loadImage(imageUrl, loadCallback, errorCallback){
   img.onerror = errorCallback;
 }
 
-function loadAvatar(imageUrl, loadCallback, errorCallback) {
+/*function loadAvatar(imageUrl, loadCallback, errorCallback) {
   const div = document.querySelector('.profile__image');
   div.style.backgroundImage = `url('${imageUrl}')`;
   div.onload = loadCallback;
   div.onerror = errorCallback;
-}
+}*/
 
 function handleFormNewPlaceSubmit(evt){
   evt.preventDefault();

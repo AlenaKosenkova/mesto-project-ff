@@ -49,8 +49,7 @@ export function createCard(name, link, likes, showCard, cardOwnerId, userId, car
     }
   });
   cardElement.addEventListener('click', function(evt){
-    //console.log(cardId);
-    likeCard(evt, cardElement, cardId, likes, userId);
+    likeCard(evt, cardId, cardElement);
   })
   cardElement.querySelector('.card__image').addEventListener('click', function(evt){
     openPopup(popupTypeImage);
@@ -65,23 +64,12 @@ export function deleteCard(evt, cardId){
   card.remove();
 }
 
-function likeCard(evt, cardElement, cardId, likes){
-  //console.log(likes);
-  //addLike(cardId);
-  //deleteLike(cardId);
-  if(evt.target.classList.contains('card__like-button')){ 
-    //console.log(likes.length)
-    evt.target.classList.toggle('card__like-button_is-active');
-    addLike(cardId);
-  }
+function likeCard(evt, cardId, cardElement){
   if(evt.target.classList.contains('card__like-button_is-active')) {
-    console.log(likes);
-    deleteLike(cardId, likes);
-    console.log(likes);
-    //evt.target.classList.toggle('card__like-button'); 
+    evt.target.classList.remove('card__like-button_is-active')
+    deleteLike(cardId, cardElement)
+  } else {
+    evt.target.classList.add('card__like-button_is-active')
+    addLike(cardId, cardElement);
   }
-
-
-  cardElement.querySelector('.card__like-counter').textContent = likes.length;
-  //likeCount(evt);
 }
