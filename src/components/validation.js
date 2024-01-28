@@ -50,7 +50,7 @@ function isValid(formElement, formSelector, inputElement) {
 function setEventListener(formElement, formSelector) {
   const inputList = Array.from(formElement.querySelectorAll(formSelector.inputSelector));
   const buttonElement = formElement.querySelector(formSelector.submitButtonSelector);
-  toggleButtonState(inputList, buttonElement, formSelector);
+  //toggleButtonState(inputList, buttonElement, formSelector);
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
       isValid(formElement, formSelector, inputElement);
@@ -67,13 +67,16 @@ export function enableValidation(formSelector) {
   })
 }
 
-export function clearValidation(profileForm/*, validationConfig*/) {
-  const errorSpanList = Array.from(profileForm.querySelectorAll('.popup__span'));
-  const errorInputList = Array.from(profileForm.querySelectorAll('.popup__input'));
-  errorSpanList.forEach((item) => {
-    item.classList.remove(/*validationConfig.errorClass*/'popup__error_visible');
+export function clearValidation(profileForm, validationConfig/*, validationConfig*/) {
+  //const errorSpanList = Array.from(profileForm.querySelectorAll('.popup__span'));
+  const spanList = Array.from(profileForm.querySelectorAll(validationConfig.spanSelector));
+  const inputList = Array.from(profileForm.querySelectorAll(validationConfig.inputSelector));
+  const buttonElement = profileForm.querySelector(validationConfig.submitButtonSelector);
+  spanList.forEach((item) => {
+    item.classList.remove(validationConfig.popupError);
   })
-  errorInputList.forEach((item) => {
-    item.classList.remove(/*validationConfig.inputErrorClass*/'popup__input_type_error');
+  inputList.forEach((item) => {
+    item.classList.remove(validationConfig.inputError);
   })
+  toggleButtonState(inputList, buttonElement, validationConfig);
 }

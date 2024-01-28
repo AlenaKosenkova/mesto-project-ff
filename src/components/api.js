@@ -4,8 +4,20 @@
 _id: "f59e98dc40b9812d248fd611"
 */
 
-//import { initialCards, createCard } from "../components/cards.js";
-//import { /*showCard,*/ /*placesList,*/ nameInput, jobInput, load, cardInput, urlInput } from "../scripts";
+
+import { createCard } from "./cards";
+import { profileTitle, profileDescription, showCard, placesList } from "../scripts";
+
+let userId;
+let userName;
+let userAbout;
+let cardId;
+let cardName;
+let cardLink;
+let cardLikes;
+let cardOwnerId;
+let allCards;
+let likes;
 
 const config = {
   URL: 'https://mesto.nomoreparties.co/v1/wff-cohort-5',
@@ -15,7 +27,7 @@ const config = {
   }
 }
 
-function getCards() {
+export function getCards() {
   return fetch(`${config.URL}/cards`, {
     method: 'GET',
     headers: config.headers
@@ -26,11 +38,20 @@ function getCards() {
       }
       return Promise.reject(res.status)
     })
+    .then((cards) => {
+      allCards = cards;
+      cards.forEach((card) => {
+        cardId = card._id;
+        cardName = card.name;
+        cardLink = card.link;
+        cardLikes = card.likes;
+        cardOwnerId = card.owner._id;
+      })
+    })
 }
 
-function getUser() {
+export async function getUser() {
   return fetch(`${config.URL}/users/me`, {
-    method: 'GET',
     headers: config.headers,
   })
     .then((res) => {
@@ -39,17 +60,31 @@ function getUser() {
       }
       return Promise.reject(res.status)
     })
-}
-
-export function showAPICards(createCard, showCard, placesList) {
-  getCards()
-    .then((addCard) => {
-      addCard.forEach((card) => {
-        placesList.append(createCard(card.name, card.link, card.likes.length, showCard));
-      })
+    .then((user) => {
+      userId = user._id;
+      userName = user.name;
+      userAbout = user.about;
     })
     .catch(err => console.log(`Ошибка ${err}`))
 }
+
+/*Promise.all(getUser())
+  .then(() => {
+    document.querySelector('.profile__title').textContent = userName;
+    document.querySelector('.profile__description').textContent = userAbout;
+  })
+  .catch(err => console.log(`Ошибка ${err}`))*/
+
+export async function showUser() {
+  await getUser()
+    .then(() => {
+      document.querySelector('.profile__title').textContent = userName;
+      document.querySelector('.profile__description').textContent = userAbout;
+    })
+    .catch(err => console.log(`Ошибка ${err}`))
+}
+
+showUser();
 
 export function changeUser(userName, userAbout) {
   return fetch(`${config.URL}/users/me`, {
@@ -60,19 +95,31 @@ export function changeUser(userName, userAbout) {
       about: userAbout
     })
   })
+  .then(res => res.json())
+  .then((userInfo) => {
+    profileTitle.textContent = userInfo.name;
+    profileDescription.textContent = userInfo.about;
+  })
+  .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function showUser(profileTitle, profileDescription) {
-  getUser()
-    .then((user) => {
-      profileTitle.textContent = user.name;
-      profileDescription.textContent = user.about;
+export async function showAPICards(createCard, showCard, placesList) {
+  await getCards()
+    .then(() => {
+      allCards.forEach((card) => {
+        placesList.append(createCard(card.name, card.link, card.likes, showCard, card.owner._id, userId, card._id))
+      })
     })
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function postCard(cardName, urlName/*, deleteButton*/) {
-  //deleteButton.classList.remove('card__delete-button_is_hidden');
+/*export function changeAvatar() {
+  return fetch(`${config.URL}/users/me/avatar`, {
+
+  })
+}*/
+
+export function postCard(cardName, urlName) {
   return fetch(`${config.URL}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -81,62 +128,42 @@ export function postCard(cardName, urlName/*, deleteButton*/) {
       link: urlName
     })
   })
+    .then(res => res.json())
+    .catch(err => console.log(`Ошибка ${err}`))
 }
 
-//let obj = {};
-function getObject() {
-  const likeButton = document.querySelectorAll('.card__like-button');
-  //console.log(likeButton);
-  getCards()
-    .then((card) => {
-      card.forEach((item, i) => {
-        let obj = {};
-        const cardId = item._id;
-        obj[cardId] = Array.from(document.querySelectorAll('.card__like-button'))[i];
-        console.log(obj);
-        return obj;
-        //const likeButton = Array.from(document.querySelectorAll('.card__like-button'));
-        /*likeButton.forEach((like, i) => {
-          //console.log(likeButton);
-            obj[like] = cardId[i];
-            console.log('obj2: ' + obj);
-            })*/
-          })
-      });
-      //console.log(obj);
-    }
-      /*document.addEventListener('click', function(evt){
-        card.forEach((item) => {
-          console.log(item._id);
-        })
-      })*/
-      /*card.forEach((item) => {
-        document.addEventListener('click', function(evt){
-          //console.log(evt);
-          console.log(item._id);
-        })
-        //console.log(item.likes.length);
-      })*/
-      //console.log(result)
-
-getObject();
-
-/*function putCard(cardId) {
-  return fetch(`${config.URL}/cards/likes/${cardId}`, {
-    method: 'PUT',
-    headers: config.headers
+export function deleteAPICard(cardId) {
+  return fetch(`${config.URL}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers,
   })
   .then(res=>res.json())
-  .then((result) => {
-      console.log(result._id)
-  })
+  .catch(err => console.log(`Ошибка ${err}`))
 }
 
-document.addEventListener('click', function(evt){
-  putCard(evt);
-})*/
+export function addLike(cardId) {
+  return fetch(`${config.URL}/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: config.headers,
+    //body: JSON.stringify({
+    //  likes: likes
+    //})
+  })
+  .then(res=>res.json())
+  //.then(result => console.log(result._id))
+}
 
-//getInfo();
+export function deleteLike(cardId, likes) {
+  return fetch(`${config.URL}/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers,
+    body: JSON.stringify({
+      likes: likes
+    })
+  })
+  .then(res=>res.json())
+  .then(result => likes = result)
+}
 
 /*function likeCount(card) {
   let like = 0;
@@ -151,18 +178,6 @@ document.addEventListener('click', function(evt){
   likeButton.forEach((item) => {
   }) 
 }*/
-
-/*function getCardId() {
-  getCards()
-    .then(res=>res.json())
-    .then((result) => {
-      result.forEach((item) => {
-        return item._id;
-      })
-    })
-}*/
-
-//getCardId();
 
 /*function likeCount() {
   putCard('65ac35fb5c71cd66435449ec')
@@ -181,14 +196,6 @@ likeCount();*/
 //likeCard();
 
 //document.addEventListener('click', likeCard);
-
-/*fetch(`https://mesto.nomoreparties.co/v1/wff-cohort-5/cards/${cardId}`, {
-  method: 'DELETE',
-  headers: {
-    authorization: '2cb2188a-a25e-48c4-964b-fdf31730250e',
-    'Content-Type': 'application/json'
-  }
-})*/
 
 /*fetch(`https://nomoreparties.co/v1/wff-cohort-5/cards/likes/${cardId}`,{
   method: 'PUT',
