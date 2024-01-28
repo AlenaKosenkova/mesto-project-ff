@@ -1,7 +1,7 @@
 import { createCard, /*initialCards, deleteCard*/ } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
 import { enableValidation, clearValidation } from "../components/validation.js";
-import { changeUser, showAPICards, postCard, changeAvatar, renderLoading } from "../components/api.js";
+import { changeUser, showAPICards, postCard, changeAvatar, renderLoading, getCards } from "../components/api.js";
 
 export const placesList = document.querySelector('.places__list');
 export const profileImage = document.querySelector('.profile__image');
@@ -129,14 +129,25 @@ function error(form, spanError, inputType){
   errorLinkInput.textContent = form.querySelector(`.popup__input_type_${inputType}`).dataset.errorMessage;
 }
 
-export function loadCard(){
-  //showAPICards(createCard, showCard, placesList);
+/*export function loadCard(){
   //const cardElement = postCard(cardInput.value, urlInput.value, createCard, showCard, placesList);
-  placesList.prepend(postCard(cardInput.value, urlInput.value, createCard, showCard, placesList));
+  //placesList.prepend(cardElement);
+  //placesList.append(createCard(cardInput.value, urlInput.value, postCardLikes, showCard, postCardOwner, userId, postCardId));
+  //addCard(createCard, showCard, placesList);
+  postCard(cardInput.value, urlInput.value)
+    .then((card) => {
+      console.log(card);
+      console.log(card.name);
+      console.log(card.link);
+      console.log(card.likes);
+      console.log(card.owner._id);
+      console.log(card._id);
+      createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id)
+    })
   newPlaceForm.reset();
   closePopup(popupTypeNewCard);
   //showAPICards(createCard, showCard, placesList);
-}
+}*/
 
 function newAvatar() {
   changeAvatar(profileImage, avatarInput.value);
@@ -160,9 +171,13 @@ function loadImage(imageUrl, loadCallback, errorCallback){
 function handleFormNewPlaceSubmit(evt){
   evt.preventDefault();
   renderLoading(true);
-  const link = 'link';
-  const url = 'url';
-  loadImage(urlInput.value, loadCard, error(newPlaceForm, link, url));
+  postCard(cardInput.value, urlInput.value)
+  .then((card) => {
+    placesList.prepend(createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id));
+  })
+    .catch(err => console.log(`Ошибка ${err}`))
+  newPlaceForm.reset();
+  closePopup(popupTypeNewCard);
 };
 newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 
 

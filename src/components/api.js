@@ -8,18 +8,16 @@ _id: "f59e98dc40b9812d248fd611"
 //import { createCard } from "./cards";
 import { profileTitle, profileDescription, showCard, placesList } from "../scripts";
 
-let userId;
-let userName;
-let userAbout;
 let cardId;
 let cardName;
 let cardLink;
 let cardLikes;
 let cardOwnerId;
 let allCards;
-let likesAdd;
-let likesRemove;
 let avatarUrl;
+let userId;
+let userName;
+let userAbout;
 let postCardName;
 let postCardLink;
 let postCardLikes;
@@ -116,7 +114,7 @@ export const changeUser = (userName, userAbout) => {
 }
 
 export function showAPICards(createCard, showCard, placesList) {
-  getCards()
+  return getCards()
     .then(() => {
       allCards.forEach((card) => {
         placesList.append(createCard(card.name, card.link, card.likes, showCard, card.owner._id, userId, card._id))
@@ -144,7 +142,7 @@ export const changeAvatar = (profileImage, avatarUrl)  => {
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export const postCard = (cardName, urlName, createCard, showCard, placesList) => {
+export const postCard = (cardName, urlName) => {
   return fetch(`${config.URL}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -159,17 +157,6 @@ export const postCard = (cardName, urlName, createCard, showCard, placesList) =>
       }
       return Promise.reject(res.status)
     })
-    .then((result) => {
-      postCardName = result.name;
-      postCardLink = result.link;
-      postCardLikes = result.likes;
-      postCardOwner = result.owner._id;
-      postCardId = result._id;
-    })
-    .then(() => {
-      placesList.append(createCard(postCardName, postCardLink, postCardLikes, showCard, postCardOwner, userId, postCardId))
-    })
-    .then(() => showAPICards(createCard, showCard, placesList))
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
@@ -188,6 +175,7 @@ export const deleteAPICard = (cardId) => {
 }
 
 export const addLike = (cardId, cardElement) => {
+  let likesAdd;
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers: config.headers,
@@ -204,6 +192,7 @@ export const addLike = (cardId, cardElement) => {
 }
 
 export const deleteLike = (cardId, cardElement) => {
+  let likesRemove;
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
