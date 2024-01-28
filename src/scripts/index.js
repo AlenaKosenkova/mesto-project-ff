@@ -1,7 +1,7 @@
-import { initialCards, createCard, deleteCard } from "../components/cards.js";
+import { createCard, /*initialCards, deleteCard*/ } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
 import { enableValidation, clearValidation } from "../components/validation.js";
-import { changeUser, showUser, showAPICards, postCard, changeAvatar } from "../components/api.js";
+import { changeUser, showAPICards, postCard, changeAvatar, renderLoading } from "../components/api.js";
 
 export const placesList = document.querySelector('.places__list');
 export const profileImage = document.querySelector('.profile__image');
@@ -88,6 +88,7 @@ profileAddButton.addEventListener('click', () => {
 
 avatarEditButton.addEventListener('click', () => {
   openPopup(popupTypeAvatar);
+  clearValidation(popupTypeAvatar, validationConfig);
   newAvatarForm.reset();  
 })
 
@@ -117,21 +118,15 @@ export function closeOverlay(evt){
 
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
+  renderLoading(true);
   changeUser(nameInput.value, jobInput.value);
-  //showUser(profileTitle, profileDescription);
-  //profileDescription.textContent = jobInput.value;
-  //profileTitle.textContent = nameInput.value;
   closePopup(popupTypeEdit);
 }
 formPopupCard.addEventListener('submit', handleFormEditProfileSubmit);
 
 function error(form, spanError, inputType){
-  //const errorLinkInput = newPlaceForm.querySelector('.link-input-error');
-  //errorLinkInput.textContent = newPlaceForm.querySelector('.popup__input_type_url').dataset.errorMessage;
   const errorLinkInput = form.querySelector(`.${spanError}-input-error`);
   errorLinkInput.textContent = form.querySelector(`.popup__input_type_${inputType}`).dataset.errorMessage;
-  //newPlaceForm.reset();
-  //urlInput.placeholder = 'Введите корректную ссылку';
 }
 
 export function loadCard(){
@@ -164,6 +159,7 @@ function loadImage(imageUrl, loadCallback, errorCallback){
 
 function handleFormNewPlaceSubmit(evt){
   evt.preventDefault();
+  renderLoading(true);
   const link = 'link';
   const url = 'url';
   loadImage(urlInput.value, loadCard, error(newPlaceForm, link, url));
@@ -172,6 +168,7 @@ newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit);
 
 function handleFormNewAvatarSubmit(evt) {
   evt.preventDefault();
+  renderLoading(true);
   const avatar = 'avatar';
   loadImage(avatarInput.value, newAvatar, error(newAvatarForm, avatar, avatar));
   //loadAvatar(avatarInput.value, newAvatar, error(newAvatarForm, avatar, avatar));

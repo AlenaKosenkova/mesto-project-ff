@@ -5,7 +5,7 @@ _id: "f59e98dc40b9812d248fd611"
 */
 
 
-import { createCard } from "./cards";
+//import { createCard } from "./cards";
 import { profileTitle, profileDescription, showCard, placesList } from "../scripts";
 
 let userId;
@@ -34,9 +34,8 @@ const config = {
   }
 }
 
-export function getCards() {
-  return fetch(`${config.URL}/cards`, {
-    method: 'GET',
+export const getCards = async () => { 
+  await fetch(`${config.URL}/cards`, {
     headers: config.headers
   })
     .then((res) => {
@@ -55,10 +54,11 @@ export function getCards() {
         cardOwnerId = card.owner._id;
       })
     })
+    .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export async function getUser() {
-  return fetch(`${config.URL}/users/me`, {
+export const getUser = async () => {
+  await fetch(`${config.URL}/users/me`, {
     headers: config.headers,
   })
     .then((res) => {
@@ -74,28 +74,26 @@ export async function getUser() {
       avatarUrl = user.avatar;
     })
     .catch(err => console.log(`Ошибка ${err}`))
+    .finally(() => renderLoading(false));
 }
 
-/*Promise.all(getUser())
+(() => {
+  getUser()
   .then(() => {
     document.querySelector('.profile__title').textContent = userName;
     document.querySelector('.profile__description').textContent = userAbout;
+    document.querySelector('.profile__image').style.backgroundImage = `url('${avatarUrl}')`
   })
-  .catch(err => console.log(`Ошибка ${err}`))*/
+  .catch(err => console.log(`Ошибка ${err}`))
+})();
 
-export async function showUser() {
-  await getUser()
-    .then(() => {
-      document.querySelector('.profile__title').textContent = userName;
-      document.querySelector('.profile__description').textContent = userAbout;
-      document.querySelector('.profile__image').style.backgroundImage = `url('${avatarUrl}')`
-    })
-    .catch(err => console.log(`Ошибка ${err}`))
+export function renderLoading(isLoading) {
+  if(isLoading) {
+    document.querySelector('.popup__button').textContent = 'Сохранение...';
+  }
 }
 
-showUser();
-
-export function changeUser(userName, userAbout) {
+export const changeUser = (userName, userAbout) => {
   return fetch(`${config.URL}/users/me`, {
     method: 'PATCH',
     headers: config.headers,
@@ -104,7 +102,12 @@ export function changeUser(userName, userAbout) {
       about: userAbout
     })
   })
-  .then(res => res.json())
+  .then((res) => {
+    if(res.ok) {
+      return res.json()
+    }
+    return Promise.reject(res.status)
+  })
   .then((userInfo) => {
     profileTitle.textContent = userInfo.name;
     profileDescription.textContent = userInfo.about;
@@ -112,8 +115,8 @@ export function changeUser(userName, userAbout) {
   .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export async function showAPICards(createCard, showCard, placesList) {
-  await getCards()
+export function showAPICards(createCard, showCard, placesList) {
+  getCards()
     .then(() => {
       allCards.forEach((card) => {
         placesList.append(createCard(card.name, card.link, card.likes, showCard, card.owner._id, userId, card._id))
@@ -122,7 +125,7 @@ export async function showAPICards(createCard, showCard, placesList) {
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function changeAvatar(profileImage, avatarUrl) {
+export const changeAvatar = (profileImage, avatarUrl)  => {
   return fetch(`${config.URL}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
@@ -130,12 +133,18 @@ export function changeAvatar(profileImage, avatarUrl) {
       avatar: avatarUrl
     })
   })
-    .then(res => res.json())
+    .then((res) => {
+      if(res.ok) {
+        return res.json()
+      }
+      return Promise.reject(res.status)
+    })
     .then(result => avatarUrl = result.avatar)
     .then(() => profileImage.style.backgroundImage = `url('${avatarUrl}')`)
+    .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function postCard(cardName, urlName, createCard, showCard, placesList) {
+export const postCard = (cardName, urlName, createCard, showCard, placesList) => {
   return fetch(`${config.URL}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -144,7 +153,12 @@ export function postCard(cardName, urlName, createCard, showCard, placesList) {
       link: urlName
     })
   })
-    .then(res => res.json())
+    .then((res) => {
+      if(res.ok) {
+        return res.json()
+      }
+      return Promise.reject(res.status)
+    })
     .then((result) => {
       postCardName = result.name;
       postCardLink = result.link;
@@ -159,31 +173,48 @@ export function postCard(cardName, urlName, createCard, showCard, placesList) {
     .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function deleteAPICard(cardId) {
+export const deleteAPICard = (cardId) => {
   return fetch(`${config.URL}/cards/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
   })
-  .then(res=>res.json())
+  .then((res) => {
+    if(res.ok) {
+      return res.json()
+    }
+    return Promise.reject(res.status)
+  })
   .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function addLike(cardId, cardElement) {
+export const addLike = (cardId, cardElement) => {
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers: config.headers,
   })
-  .then(res=>res.json())
+  .then((res) => {
+    if(res.ok) {
+      return res.json()
+    }
+    return Promise.reject(res.status)
+  })
   .then(result => likesAdd = result.likes)
   .then(() => cardElement.querySelector('.card__like-counter').textContent = likesAdd.length)
+  .catch(err => console.log(`Ошибка ${err}`))
 }
 
-export function deleteLike(cardId, cardElement) {
+export const deleteLike = (cardId, cardElement) => {
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
   })
-  .then(res=>res.json())
+  .then((res) => {
+    if(res.ok) {
+      return res.json()
+    }
+    return Promise.reject(res.status)
+  })
   .then(result => likesRemove = result.likes)
   .then(() => cardElement.querySelector('.card__like-counter').textContent = likesRemove.length)
+  .catch(err => console.log(`Ошибка ${err}`))
 }
