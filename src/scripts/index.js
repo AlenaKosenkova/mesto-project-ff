@@ -1,7 +1,7 @@
 import { createCard, /*initialCards, deleteCard*/ } from "../components/cards.js";
 import { closePopup, openPopup } from "../components/modal.js";
 import { enableValidation, clearValidation } from "../components/validation.js";
-import { changeUser, showAPICards, postCard, changeAvatar, renderLoading, getCards } from "../components/api.js";
+import { changeUser, postCard, changeAvatar, renderLoading } from "../components/api.js";
 
 export const placesList = document.querySelector('.places__list');
 export const profileImage = document.querySelector('.profile__image');
@@ -57,8 +57,6 @@ enableValidation({
 popup.forEach(item => {
   item.classList.add('popup_is-animated');
 })
-
-showAPICards(createCard, showCard, placesList);
 
 /*initialCards.forEach(item => {
   placesList.append(createCard(item.name, item.link, showCard));
@@ -119,38 +117,35 @@ export function closeOverlay(evt){
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
   renderLoading(true);
-  changeUser(nameInput.value, jobInput.value);
+  changeUser(nameInput.value, jobInput.value)
+    .then((userInfo) => {
+      profileTitle.textContent = userInfo.name;
+      profileDescription.textContent = userInfo.about;
+    })
   closePopup(popupTypeEdit);
 }
 formPopupCard.addEventListener('submit', handleFormEditProfileSubmit);
 
 function error(form, spanError, inputType){
+  renderLoading(false);
   const errorLinkInput = form.querySelector(`.${spanError}-input-error`);
   errorLinkInput.textContent = form.querySelector(`.popup__input_type_${inputType}`).dataset.errorMessage;
 }
 
-/*export function loadCard(){
-  //const cardElement = postCard(cardInput.value, urlInput.value, createCard, showCard, placesList);
-  //placesList.prepend(cardElement);
-  //placesList.append(createCard(cardInput.value, urlInput.value, postCardLikes, showCard, postCardOwner, userId, postCardId));
-  //addCard(createCard, showCard, placesList);
+export function loadCard(){
   postCard(cardInput.value, urlInput.value)
-    .then((card) => {
-      console.log(card);
-      console.log(card.name);
-      console.log(card.link);
-      console.log(card.likes);
-      console.log(card.owner._id);
-      console.log(card._id);
-      createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id)
-    })
+  .then((card) => {
+    placesList.prepend(createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id));
+  })
+    .catch(err => console.log(`Ошибка ${err}`))
   newPlaceForm.reset();
   closePopup(popupTypeNewCard);
-  //showAPICards(createCard, showCard, placesList);
-}*/
+}
 
 function newAvatar() {
-  changeAvatar(profileImage, avatarInput.value);
+  renderLoading(true);
+  changeAvatar(avatarInput.value)
+    .then((avatar) => profileImage.style.backgroundImage = `url('${avatar.avatar}')`) 
   closePopup(popupTypeAvatar);
 }
 
@@ -162,7 +157,7 @@ function loadImage(imageUrl, loadCallback, errorCallback){
 }
 
 /*function loadAvatar(imageUrl, loadCallback, errorCallback) {
-  const div = document.querySelector('.profile__image');
+  const div = document.createElement('div');
   div.style.backgroundImage = `url('${imageUrl}')`;
   div.onload = loadCallback;
   div.onerror = errorCallback;
@@ -171,19 +166,14 @@ function loadImage(imageUrl, loadCallback, errorCallback){
 function handleFormNewPlaceSubmit(evt){
   evt.preventDefault();
   renderLoading(true);
-  postCard(cardInput.value, urlInput.value)
-  .then((card) => {
-    placesList.prepend(createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id));
-  })
-    .catch(err => console.log(`Ошибка ${err}`))
-  newPlaceForm.reset();
-  closePopup(popupTypeNewCard);
+  const link = 'link';
+  const url = 'url';
+  loadImage(urlInput.value, loadCard, error(newPlaceForm, link, url));
 };
 newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 
 
 function handleFormNewAvatarSubmit(evt) {
   evt.preventDefault();
-  renderLoading(true);
   const avatar = 'avatar';
   loadImage(avatarInput.value, newAvatar, error(newAvatarForm, avatar, avatar));
   //loadAvatar(avatarInput.value, newAvatar, error(newAvatarForm, avatar, avatar));

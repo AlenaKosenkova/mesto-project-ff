@@ -109,8 +109,12 @@
           name="link" 
           class="popup__input popup__input_type_url" 
           placeholder="Ссылка на картинку"
+          pattern="https?:\/\/\S+.[png]|[jpg]|[jpeg]"
           data-error-message="Введите корректный URL"
           required>
+          <!--Работает-->
+          <!--"[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"-->
+          <!--pattern="^[(http|https):\/\/(.+?)\/(([a-zA-Z0-9_ \-%\.]*)\.(jpg|png|jpeg))]+&"-->
         <span class="link-input-error popup__span"></span>
         <button 
           type="submit" 
@@ -142,6 +146,7 @@
         name="avatar-link" 
         class="popup__input popup__input_type_avatar" 
         placeholder="Ссылка на картинку"
+        pattern="https?:\/\/\S+.[png]|[jpg]|[jpeg]"
         data-error-message="Введите корректный URL"
         required>
       <span class="avatar-input-error popup__span"></span>

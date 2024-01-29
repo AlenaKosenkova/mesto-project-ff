@@ -1,3 +1,5 @@
+import { renderLoading } from "./api";
+
 /*Показывает элемент ошибки*/
 function showInputError(formElement, formSelector, inputElement, errorMessage) {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -50,7 +52,7 @@ function isValid(formElement, formSelector, inputElement) {
 function setEventListener(formElement, formSelector) {
   const inputList = Array.from(formElement.querySelectorAll(formSelector.inputSelector));
   const buttonElement = formElement.querySelector(formSelector.submitButtonSelector);
-  //toggleButtonState(inputList, buttonElement, formSelector);
+  toggleButtonState(inputList, buttonElement, formSelector);
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
       isValid(formElement, formSelector, inputElement);
@@ -67,8 +69,7 @@ export function enableValidation(formSelector) {
   })
 }
 
-export function clearValidation(profileForm, validationConfig/*, validationConfig*/) {
-  //const errorSpanList = Array.from(profileForm.querySelectorAll('.popup__span'));
+export function clearValidation(profileForm, validationConfig) {
   const spanList = Array.from(profileForm.querySelectorAll(validationConfig.spanSelector));
   const inputList = Array.from(profileForm.querySelectorAll(validationConfig.inputSelector));
   const buttonElement = profileForm.querySelector(validationConfig.submitButtonSelector);
@@ -79,4 +80,5 @@ export function clearValidation(profileForm, validationConfig/*, validationConfi
     item.classList.remove(validationConfig.inputError);
   })
   toggleButtonState(inputList, buttonElement, validationConfig);
+  renderLoading(false);
 }

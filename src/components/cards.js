@@ -67,9 +67,11 @@ export function deleteCard(evt, cardId){
 function likeCard(evt, cardId, cardElement){
   if(evt.target.classList.contains('card__like-button_is-active')) {
     evt.target.classList.remove('card__like-button_is-active')
-    deleteLike(cardId, cardElement)
+    deleteLike(cardId)
+      .then((likes) => cardElement.querySelector('.card__like-counter').textContent = likes.likes.length)
   } else {
     evt.target.classList.add('card__like-button_is-active')
-    addLike(cardId, cardElement);
+    addLike(cardId)
+      .then((likes) => cardElement.querySelector('.card__like-counter').textContent = likes.likes.length)
   }
 }
