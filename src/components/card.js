@@ -1,5 +1,3 @@
-import { openPopup } from "./modal.js";
-import { popupTypeImage, showCard } from "./index.js";
 import { deleteAPICard, addLike, deleteLike } from "./api.js";
 
 export function createCard(name, link, likes, showCard, cardOwnerId, userId, cardId) {

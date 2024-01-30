@@ -1,5 +1,3 @@
-//import { renderLoading } from "./api";
-
 /*Показывает элемент ошибки*/
 function showInputError(formElement, validationConfig, inputElement, errorMessage) {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -69,16 +67,11 @@ export function enableValidation(validationConfig) {
   })
 }
 
-export function clearValidation(form, validationConfig) {
-  const spanList = Array.from(form.querySelectorAll(validationConfig.spanSelector));
-  const inputList = Array.from(form.querySelectorAll(validationConfig.inputSelector));
-  const buttonElement = form.querySelector(validationConfig.submitButtonSelector);
-  spanList.forEach((item) => {
-    item.classList.remove(validationConfig.popupError);
-  })
-  inputList.forEach((item) => {
-    item.classList.remove(validationConfig.inputError);
+export function clearValidation(formElement, validationConfig) {
+  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
+  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+  inputList.forEach((input) => {
+    hideInputError(formElement, validationConfig, input);
   })
   toggleButtonState(inputList, buttonElement, validationConfig);
-  //renderLoading(false);
 }

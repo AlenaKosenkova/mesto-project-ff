@@ -4,11 +4,6 @@
 _id: "f59e98dc40b9812d248fd611"
 */
 
-
-//import { createCard } from "./cards";
-import { showCard, renderLoading } from ".";
-import { createCard } from "./card";
-
 const config = {
   URL: 'https://mesto.nomoreparties.co/v1/wff-cohort-5',
   headers: {
@@ -27,7 +22,6 @@ export const getCards = () => {
       }
       return Promise.reject(res.status)
     })
-    //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const getUser = () => {
@@ -40,7 +34,6 @@ export const getUser = () => {
       }
       return Promise.reject(res.status)
     })
-    //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const changeUser = (userName, userAbout) => {
@@ -58,7 +51,6 @@ export const changeUser = (userName, userAbout) => {
     }
     return Promise.reject(res.status)
   })
-  //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const changeAvatar = (avatarUrl)  => {
@@ -75,8 +67,6 @@ export const changeAvatar = (avatarUrl)  => {
       }
       return Promise.reject(res.status)
     })
-    //.catch(err => console.log(`Ошибка ${err}`))
-    //.finally(() => renderLoading(false))
 }
 
 export const postCard = (cardName, urlName) => {
@@ -94,7 +84,6 @@ export const postCard = (cardName, urlName) => {
       }
       return Promise.reject(res.status)
     })
-    //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const deleteAPICard = (cardId) => {
@@ -108,7 +97,6 @@ export const deleteAPICard = (cardId) => {
     }
     return Promise.reject(res.status)
   })
-  //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const addLike = (cardId) => {
@@ -122,7 +110,6 @@ export const addLike = (cardId) => {
     }
     return Promise.reject(res.status)
   })
-  //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const deleteLike = (cardId) => {
@@ -137,5 +124,4 @@ export const deleteLike = (cardId) => {
     }
     return Promise.reject(res.status)
   })
-  //.catch(err => console.log(`Ошибка ${err}`))
 }

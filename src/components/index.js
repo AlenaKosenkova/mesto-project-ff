@@ -26,24 +26,29 @@ const buttonClosePopupTypeEdit = popupTypeEdit.querySelector('.popup__close');
 const buttonClosePopupTypeNewCard = popupTypeNewCard.querySelector('.popup__close');
 const buttonClosePopupTypeAvatar = popupTypeAvatar.querySelector('.popup__close');
 
+/*popupSubmit*/
+const submitButtonTypeAvatar = popupTypeAvatar.querySelector('.popup__button');
+const submitButtonTypeNewCard = popupTypeNewCard.querySelector('.popup__button');
+const submitButtonTypeEdit = popupTypeEdit.querySelector('.popup__button');
+
 /*forms*/
 const newPlaceForm = document.forms.new_place;
 const newAvatarForm = document.forms.new_avatar;
-export const formEditProfile = document.forms.edit_profile;
+const formEditProfile = document.forms.edit_profile;
 
 /*popupInput*/
-export const nameInput = document.querySelector('.popup__input_type_name');
-export const jobInput = document.querySelector('.popup__input_type_description');
-export const cardInput = document.querySelector('.popup__input_type_card-name');
-export const urlCardInput = document.querySelector('.popup__input_type_url');
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
+const cardInput = document.querySelector('.popup__input_type_card-name');
+const urlCardInput = document.querySelector('.popup__input_type_url');
 const avatarInput = document.querySelector('.popup__input_type_avatar');
 
 /*inputError*/
-export const nameError = formEditProfile.querySelector(`.${nameInput.id}-error`);
-export const jobError = formEditProfile.querySelector(`.${jobInput.id}-error`);
+const nameError = formEditProfile.querySelector(`.${nameInput.id}-error`);
+const jobError = formEditProfile.querySelector(`.${jobInput.id}-error`);
 
-export const profileDescription = document.querySelector('.profile__description');
-export const profileTitle = document.querySelector('.profile__title');
+const profileDescription = document.querySelector('.profile__description');
+const profileTitle = document.querySelector('.profile__title');
 
 popupList.forEach(item => {
   item.classList.add('popup_is-animated');
@@ -66,7 +71,6 @@ Promise.all([getCards(),getUser()])
 
 const validationConfig = {
   formSelector: '.popup__form',
-  spanSelector: '.popup__span',
   inputSelector: '.popup__input',
   popupError: 'popup__error_visible',
   inputError: 'popup__input_type_error',
@@ -77,15 +81,13 @@ const validationConfig = {
 enableValidation(validationConfig);
 
 
-export function renderLoading(isLoading) {
-  if(isLoading) {
-    Array.from(document.querySelectorAll('.popup__button')).forEach((button) => 
+export function renderLoading(isLoading, button) {
+  if(isLoading) { 
     button.textContent = 'Сохранение...'
-    )}
+  }
   if(!isLoading) {
-    Array.from(document.querySelectorAll('.popup__button')).forEach((button) => 
     button.textContent = 'Сохранить'
-  )}
+  }
 }
 
 profileEditButton.addEventListener('click', () => {
@@ -93,21 +95,18 @@ profileEditButton.addEventListener('click', () => {
   clearValidation(popupTypeEdit, validationConfig);
   jobInput.value = profileDescription.textContent;
   nameInput.value = profileTitle.textContent;
-  //renderLoading(false);
 });
 
 profileAddButton.addEventListener('click', () => {
   openPopup(popupTypeNewCard);
   newPlaceForm.reset();
   clearValidation(popupTypeNewCard, validationConfig);
-  //renderLoading(false);
 });
 
 avatarEditButton.addEventListener('click', () => {
   openPopup(popupTypeAvatar);
   newAvatarForm.reset(); 
   clearValidation(popupTypeAvatar, validationConfig); 
-  //renderLoading(false);
 })
 
 buttonClosePopupTypeEdit.addEventListener('click', () => {closePopup(popupTypeEdit)});
@@ -124,7 +123,7 @@ export function showCard(name, link){
 
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
-  renderLoading(true);
+  renderLoading(true, submitButtonTypeEdit);
   changeUser(nameInput.value, jobInput.value)
     .then((userInfo) => {
       profileTitle.textContent = userInfo.name;
@@ -132,11 +131,11 @@ function handleFormEditProfileSubmit(evt) {
     })
     .then(() => closePopup(popupTypeEdit))
     .catch(err => console.log(`Ошибка ${err}`))
+    .finally(() => renderLoading(false, submitButtonTypeEdit))
 }
 formEditProfile.addEventListener('submit', handleFormEditProfileSubmit);
 
-function error(form){
-  renderLoading(false);
+function error(){
   enableValidation(validationConfig);
   //clearValidation(form, validationConfig);
   /*const errorLinkInput = form.querySelector(`.${spanError}-input-error`);
@@ -150,18 +149,18 @@ export function loadCard(){
     })
     .then(() => closePopup(popupTypeNewCard))
     .catch(err => console.log(`Ошибка ${err}`))
+    .finally(() => renderLoading(false, submitButtonTypeNewCard))
   newPlaceForm.reset();
 }
 
 function newAvatar() {
-  //renderLoading(false);
   changeAvatar(avatarInput.value)
     .then((avatar) => {
       profileImage.style.backgroundImage = `url('${avatar.avatar}')`
     })
     .then(() => closePopup(popupTypeAvatar))
     .catch(err => console.log(`Ошибка ${err}`))
-    .finally(() => renderLoading(false))
+    .finally(() => renderLoading(false, submitButtonTypeAvatar))
 }
 
 function loadImage(imageUrl, loadCallback, errorCallback){
@@ -180,17 +179,16 @@ function loadImage(imageUrl, loadCallback, errorCallback){
 
 function handleFormNewPlaceSubmit(evt){
   evt.preventDefault();
-  renderLoading(true);
-  const link = 'link';
-  const url = 'url';
-  loadImage(urlCardInput.value, loadCard, error(newPlaceForm));
+  renderLoading(true, submitButtonTypeNewCard);
+  loadImage(urlCardInput.value, loadCard, error);
 };
 newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 
 
 function handleFormNewAvatarSubmit(evt) {
   evt.preventDefault();
+  renderLoading(true, submitButtonTypeAvatar);
   const avatar = 'avatar';
-  loadImage(avatarInput.value, newAvatar, error(newAvatarForm));
+  loadImage(avatarInput.value, newAvatar, error);
   //loadAvatar(avatarInput.value, newAvatar, error(newAvatarForm, avatar, avatar));
 }
 newAvatarForm.addEventListener('submit', handleFormNewAvatarSubmit);
