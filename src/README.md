@@ -1,4 +1,4 @@
 # Проектная работа Mesto
 
 ## Ссылка на сайт
-[Место](https://github.com/AlenaKosenkova/mesto-project-ff.git)
+[Место](https://alenakosenkova.github.io/mesto-project-ff/)

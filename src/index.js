@@ -9,10 +9,7 @@ const likeActiveImage = new URL('./images/like-active.svg', import.meta.url);
 const likeinActiveImage = new URL('./images/like-inactive.svg', import.meta.url);
 
 import './pages/index.css';//импорт главного файла стилей
-import './scripts/index.js';
-
-/*import { createCard, deleteCard } from './scripts/index.js';
-createCard();*/
+import './components/index.js';
 
 const imagesMesto = [
   { name: 'addIcon', link: addIconImage },

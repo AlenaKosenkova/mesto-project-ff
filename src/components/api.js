@@ -6,8 +6,8 @@ _id: "f59e98dc40b9812d248fd611"
 
 
 //import { createCard } from "./cards";
-import { showCard } from "../scripts";
-import { createCard } from "./cards";
+import { showCard, renderLoading } from ".";
+import { createCard } from "./card";
 
 const config = {
   URL: 'https://mesto.nomoreparties.co/v1/wff-cohort-5',
@@ -15,17 +15,6 @@ const config = {
     authorization: '2cb2188a-a25e-48c4-964b-fdf31730250e',
     'Content-Type': 'application/json'
   }
-}
-
-export function renderLoading(isLoading) {
-  if(isLoading) {
-    Array.from(document.querySelectorAll('.popup__button')).forEach((button) => 
-    button.textContent = 'Сохранение...'
-    )}
-  if(!isLoading) {
-    Array.from(document.querySelectorAll('.popup__button')).forEach((button) => 
-    button.textContent = 'Сохранить'
-  )}
 }
 
 export const getCards = () => { 
@@ -38,7 +27,7 @@ export const getCards = () => {
       }
       return Promise.reject(res.status)
     })
-    .catch(err => console.log(`Ошибка ${err}`))
+    //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const getUser = () => {
@@ -51,19 +40,8 @@ export const getUser = () => {
       }
       return Promise.reject(res.status)
     })
-    .catch(err => console.log(`Ошибка ${err}`))
+    //.catch(err => console.log(`Ошибка ${err}`))
 }
-
-Promise.all([getCards(),getUser()])
-  .then(([allCards, user]) => {
-    allCards.forEach((card) => {
-      document.querySelector('.places__list').append(createCard(card.name, card.link, card.likes, showCard, card.owner._id, user._id, card._id))
-    })
-    document.querySelector('.profile__title').textContent = user.name;
-    document.querySelector('.profile__description').textContent = user.about;
-    document.querySelector('.profile__image').style.backgroundImage = `url('${user.avatar}')`
-  })
-  .catch(err => console.log(`Ошибка ${err}`))
 
 export const changeUser = (userName, userAbout) => {
   return fetch(`${config.URL}/users/me`, {
@@ -80,7 +58,7 @@ export const changeUser = (userName, userAbout) => {
     }
     return Promise.reject(res.status)
   })
-  .catch(err => console.log(`Ошибка ${err}`))
+  //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const changeAvatar = (avatarUrl)  => {
@@ -97,8 +75,8 @@ export const changeAvatar = (avatarUrl)  => {
       }
       return Promise.reject(res.status)
     })
-    .catch(err => console.log(`Ошибка ${err}`))
-    .finally(() => renderLoading(false))
+    //.catch(err => console.log(`Ошибка ${err}`))
+    //.finally(() => renderLoading(false))
 }
 
 export const postCard = (cardName, urlName) => {
@@ -116,7 +94,7 @@ export const postCard = (cardName, urlName) => {
       }
       return Promise.reject(res.status)
     })
-    .catch(err => console.log(`Ошибка ${err}`))
+    //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const deleteAPICard = (cardId) => {
@@ -130,7 +108,7 @@ export const deleteAPICard = (cardId) => {
     }
     return Promise.reject(res.status)
   })
-  .catch(err => console.log(`Ошибка ${err}`))
+  //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const addLike = (cardId) => {
@@ -144,7 +122,7 @@ export const addLike = (cardId) => {
     }
     return Promise.reject(res.status)
   })
-  .catch(err => console.log(`Ошибка ${err}`))
+  //.catch(err => console.log(`Ошибка ${err}`))
 }
 
 export const deleteLike = (cardId) => {
@@ -159,5 +137,5 @@ export const deleteLike = (cardId) => {
     }
     return Promise.reject(res.status)
   })
-  .catch(err => console.log(`Ошибка ${err}`))
+  //.catch(err => console.log(`Ошибка ${err}`))
 }
