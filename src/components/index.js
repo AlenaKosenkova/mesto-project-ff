@@ -127,8 +127,8 @@ function handleFormEditProfileSubmit(evt) {
     .then((userInfo) => {
       profileTitle.textContent = userInfo.name;
       profileDescription.textContent = userInfo.about;
+      closePopup(popupTypeEdit);
     })
-    .then(() => closePopup(popupTypeEdit))
     .catch(err => console.log(`Ошибка ${err}`))
     .finally(() => renderLoading(false, submitButtonTypeEdit))
 }
@@ -141,8 +141,8 @@ function handleFormNewPlaceSubmit(evt){
   postCard(cardInput.value, urlCardInput.value)
     .then((card) => {
       placesList.prepend(createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id));
+      closePopup(popupTypeNewCard);
     })
-    .then(() => closePopup(popupTypeNewCard))
     .catch(err => console.log(`Ошибка ${err}`))
     .finally(() => renderLoading(false, submitButtonTypeNewCard))
   newPlaceForm.reset();
@@ -155,9 +155,9 @@ function handleFormNewAvatarSubmit(evt) {
   renderLoading(true, submitButtonTypeAvatar);
   changeAvatar(avatarInput.value)
     .then((avatar) => {
-      profileImage.style.backgroundImage = `url('${avatar.avatar}')`
+      profileImage.style.backgroundImage = `url('${avatar.avatar}')`;
+      closePopup(popupTypeAvatar);
     })
-    .then(() => closePopup(popupTypeAvatar))
     .catch(err => console.log(`Ошибка ${err}`))
     .finally(() => renderLoading(false, submitButtonTypeAvatar))
 }
