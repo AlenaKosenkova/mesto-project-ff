@@ -28,7 +28,7 @@ export function createCard(name, link, likes, showCard, cardOwnerId, userId, car
   return cardElement;
 };
 
-export function deleteCard(evt, cardId){
+function deleteCard(evt, cardId){
   deleteAPICard(cardId)
     .then(() => {
       const card = evt.target.closest('.card');

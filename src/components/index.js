@@ -1,10 +1,10 @@
-import { createCard, /*initialCards, deleteCard*/ } from "./card.js";
+import { createCard } from "./card.js";
 import { closePopup, openPopup } from "./modal.js";
 import { enableValidation, clearValidation } from "./validation.js";
 import { getCards, getUser, changeUser, postCard, changeAvatar } from "./api.js";
 
-export const placesList = document.querySelector('.places__list');
-export const profileImage = document.querySelector('.profile__image');
+const placesList = document.querySelector('.places__list');
+const profileImage = document.querySelector('.profile__image');
 
 /*button for popup*/
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -16,7 +16,7 @@ const popupList = document.querySelectorAll('.popup');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
 const popupTypeAvatar = document.querySelector('.popup_type_new-avatar');
-export const popupTypeImage = document.querySelector('.popup_type_image');
+const popupTypeImage = document.querySelector('.popup_type_image');
 const popupImageContentImage = document.querySelector('.popup__image');
 const popupCaptionContentImage = document.querySelector('.popup__caption');
 
@@ -43,9 +43,8 @@ const cardInput = document.querySelector('.popup__input_type_card-name');
 const urlCardInput = document.querySelector('.popup__input_type_url');
 const avatarInput = document.querySelector('.popup__input_type_avatar');
 
-/*inputError*/
-const nameError = formEditProfile.querySelector(`.${nameInput.id}-error`);
-const jobError = formEditProfile.querySelector(`.${jobInput.id}-error`);
+/*popupSpanError*/
+//const avatarSpanError = newAvatarForm.querySelector('.avatar-input-error');
 
 const profileDescription = document.querySelector('.profile__description');
 const profileTitle = document.querySelector('.profile__title');
@@ -58,7 +57,7 @@ popupList.forEach(item => {
   placesList.append(createCard(item.name, item.link, showCard));
 });*/
 
-Promise.all([getCards(),getUser()])
+Promise.all([getCards(), getUser()])
   .then(([allCards, user]) => {
     allCards.forEach((card) => {
       placesList.append(createCard(card.name, card.link, card.likes, showCard, card.owner._id, user._id, card._id))
@@ -81,7 +80,7 @@ const validationConfig = {
 enableValidation(validationConfig);
 
 
-export function renderLoading(isLoading, button) {
+function renderLoading(isLoading, button) {
   if(isLoading) { 
     button.textContent = 'Сохранение...'
   }
@@ -114,7 +113,7 @@ buttonClosePopupTypeNewCard.addEventListener('click', () => {closePopup(popupTyp
 buttonClosePopupTypeImage.addEventListener('click', () => {closePopup(popupTypeImage)});
 buttonClosePopupTypeAvatar.addEventListener('click', () => (closePopup(popupTypeAvatar)));
 
-export function showCard(name, link){
+function showCard(name, link){
   openPopup(popupTypeImage);
   popupImageContentImage.src = link;
   popupCaptionContentImage.textContent = name;
@@ -135,14 +134,10 @@ function handleFormEditProfileSubmit(evt) {
 }
 formEditProfile.addEventListener('submit', handleFormEditProfileSubmit);
 
-function error(){
-  enableValidation(validationConfig);
-  //clearValidation(form, validationConfig);
-  /*const errorLinkInput = form.querySelector(`.${spanError}-input-error`);
-  errorLinkInput.textContent = form.querySelector(`.popup__input_type_${inputType}`).dataset.errorMessage;*/
-}
 
-export function loadCard(){
+function handleFormNewPlaceSubmit(evt){
+  evt.preventDefault();
+  renderLoading(true, submitButtonTypeNewCard);
   postCard(cardInput.value, urlCardInput.value)
     .then((card) => {
       placesList.prepend(createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id));
@@ -151,9 +146,13 @@ export function loadCard(){
     .catch(err => console.log(`Ошибка ${err}`))
     .finally(() => renderLoading(false, submitButtonTypeNewCard))
   newPlaceForm.reset();
-}
+};
+newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 
 
-function newAvatar() {
+function handleFormNewAvatarSubmit(evt) {
+  evt.preventDefault();
+  clearValidation(newAvatarForm, validationConfig);
+  renderLoading(true, submitButtonTypeAvatar);
   changeAvatar(avatarInput.value)
     .then((avatar) => {
       profileImage.style.backgroundImage = `url('${avatar.avatar}')`
@@ -162,13 +161,43 @@ function newAvatar() {
     .catch(err => console.log(`Ошибка ${err}`))
     .finally(() => renderLoading(false, submitButtonTypeAvatar))
 }
+newAvatarForm.addEventListener('submit', handleFormNewAvatarSubmit);
 
-function loadImage(imageUrl, loadCallback, errorCallback){
+/*function loadCard(){
+  clearValidation(newPlaceForm, validationConfig);
+  renderLoading(true, submitButtonTypeNewCard);
+  postCard(cardInput.value, urlCardInput.value)
+    .then((card) => {
+      placesList.prepend(createCard(card.name, card.link, card.likes, showCard, card.owner._id, card.owner._id, card._id));
+    })
+    .then(() => closePopup(popupTypeNewCard))
+    .catch(err => console.log(`Ошибка ${err}`))
+    .finally(() => renderLoading(false, submitButtonTypeNewCard))
+  newPlaceForm.reset();
+}*/
+
+/*function newAvatar() {
+  clearValidation(newAvatarForm, validationConfig);
+  renderLoading(true, submitButtonTypeAvatar);
+  changeAvatar(avatarInput.value)
+    .then((avatar) => {
+      profileImage.style.backgroundImage = `url('${avatar.avatar}')`
+    })
+    .then(() => closePopup(popupTypeAvatar))
+    .catch(err => console.log(`Ошибка ${err}`))
+    .finally(() => renderLoading(false, submitButtonTypeAvatar))
+}*/
+
+/*function error(submitButton){
+  //renderLoading(false, submitButton);
+}*/
+
+/*function loadImage(imageUrl, loadCallback, errorCallback){
   const img = document.createElement('img');
   img.src = imageUrl;
   img.onload = loadCallback;
   img.onerror = errorCallback;
-}
+}*/
 
 /*function loadAvatar(imageUrl, loadCallback, errorCallback) {
   const div = document.createElement('div');
@@ -176,19 +205,3 @@ function loadImage(imageUrl, loadCallback, errorCallback){
   div.onload = loadCallback;
   div.onerror = errorCallback;
 }*/
-
-function handleFormNewPlaceSubmit(evt){
-  evt.preventDefault();
-  renderLoading(true, submitButtonTypeNewCard);
-  loadImage(urlCardInput.value, loadCard, error);
-};
-newPlaceForm.addEventListener('submit', handleFormNewPlaceSubmit); 
-
-function handleFormNewAvatarSubmit(evt) {
-  evt.preventDefault();
-  renderLoading(true, submitButtonTypeAvatar);
-  const avatar = 'avatar';
-  loadImage(avatarInput.value, newAvatar, error);
-  //loadAvatar(avatarInput.value, newAvatar, error(newAvatarForm, avatar, avatar));
-}
-newAvatarForm.addEventListener('submit', handleFormNewAvatarSubmit);

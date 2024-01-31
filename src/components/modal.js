@@ -1,5 +1,3 @@
-//import { closeEscape, closeOverlay } from "../scripts/index.js";
-
 export function openPopup(popup) {
   popup.classList.add('popup_is-opened');
   document.addEventListener('keydown', closeEscape);
@@ -12,14 +10,14 @@ export function closePopup(popup) {
   document.removeEventListener('click', closeOverlay);
 }
 
-export function closeEscape(evt){
+function closeEscape(evt){
   if(evt.code === 'Escape'){
     if(document.querySelector('.popup_is-opened')){
       closePopup(document.querySelector('.popup_is-opened'));
     }
 }}
 
-export function closeOverlay(evt){
+function closeOverlay(evt){
   if(evt.target.classList.contains('popup_is-opened')){
     closePopup(evt.target);
   }

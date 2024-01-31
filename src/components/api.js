@@ -20,7 +20,7 @@ export const getCards = () => {
       if(res.ok) {
         return res.json()
       }
-      return Promise.reject(res.status)
+      return Promise.reject(document.querySelector('.avatar-input-error').textContent = res.status)
     })
 }
 
@@ -113,7 +113,6 @@ export const addLike = (cardId) => {
 }
 
 export const deleteLike = (cardId) => {
-  let likesRemove;
   return fetch(`${config.URL}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers,
