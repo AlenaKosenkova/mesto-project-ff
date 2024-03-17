@@ -20,7 +20,7 @@ export const getCards = () => {
       if(res.ok) {
         return res.json()
       }
-      return Promise.reject(document.querySelector('.avatar-input-error').textContent = res.status)
+      return Promise.reject(res.status)
     })
 }
 

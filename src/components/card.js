@@ -40,16 +40,22 @@ function deleteCard(evt, cardId){
 
 function likeCard(evt, cardId, cardElement){
   deleteLike(cardId)
-    .then((likes) => cardElement.querySelector('.card__like-counter').textContent = likes.likes.length)
-    .then(() => {
-        evt.target.classList.remove('card__like-button_is-active')
+    .then((likes) => {
+      cardElement.querySelector('.card__like-counter').textContent = likes.likes.length;
+      evt.target.classList.remove('card__like-button_is-active');
     })
+    /*.then(() => {
+        evt.target.classList.remove('card__like-button_is-active')
+    })*/
     .catch(err => console.log(`Ошибка ${err}`))
 
   addLike(cardId)
-    .then((likes) => cardElement.querySelector('.card__like-counter').textContent = likes.likes.length)
-    .then(() => {
-      evt.target.classList.add('card__like-button_is-active')
+    .then((likes) => {
+      cardElement.querySelector('.card__like-counter').textContent = likes.likes.length;
+      evt.target.classList.add('card__like-button_is-active');
     })
+    /*.then(() => {
+      evt.target.classList.add('card__like-button_is-active')
+    })*/
     .catch(err => console.log(`Ошибка ${err}`))
 }
